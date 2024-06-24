@@ -82,7 +82,9 @@ public Object getCurrentUser()
     {
         return admin.getName();
     }
+    else{
     return new ResponseEntity<String>("User Not Authenticated",HttpStatus.BAD_REQUEST);
+}
 
 
 }
