@@ -1,7 +1,9 @@
 package com.ess.lms.Controllers;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.stream.Collector;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -63,28 +65,14 @@ public class AuthController {
 @GetMapping("user/get")
 public Object getCurrentUser()
 {
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    // Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     Authentication user = SecurityContextHolder.getContext().getAuthentication();
-    Role lecturer=roleRepository.findByName("LECTURER").get();
-    Role student=roleRepository.findByName("STUDENT").get();
-    Role admin=roleRepository.findByName("ADMIN").get();
-    if(user.getAuthorities().toArray()[0].toString().equals(lecturer.getName()))
-    {
-        return lecturer.getName();
-    }
-    else if (user.getAuthorities().toArray()[0].toString().equals(student.getName()))
-    {
-        return student.getName();
-    }
+    // Role lecturer=roleRepository.findByName("LECTURER").get();
+    // Role student=roleRepository.findByName("STUDENT").get();
+    // Role admin=roleRepository.findByName("ADMIN").get();
     
+    return new ResponseEntity<>(user.getAuthorities(),HttpStatus.BAD_REQUEST);
 
-    else if(user.getAuthorities().toArray()[0].toString().equals(admin.getName()))
-    {
-        return admin.getName();
-    }
-    else{
-    return new ResponseEntity<String>("User Not Authenticated",HttpStatus.BAD_REQUEST);
-}
 
 
 }
