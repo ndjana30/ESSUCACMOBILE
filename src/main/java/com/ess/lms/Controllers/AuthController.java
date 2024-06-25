@@ -67,11 +67,12 @@ public Object getCurrentUser()
 {
     // Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     Authentication user = SecurityContextHolder.getContext().getAuthentication();
+
     // Role lecturer=roleRepository.findByName("LECTURER").get();
     // Role student=roleRepository.findByName("STUDENT").get();
     // Role admin=roleRepository.findByName("ADMIN").get();
     
-    return new ResponseEntity<>(user.getAuthorities(),HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(user.getAuthorities(),HttpStatus.OK);
 
 
 
