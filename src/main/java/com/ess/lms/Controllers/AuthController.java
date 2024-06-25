@@ -72,7 +72,7 @@ public Object getCurrentUser()
     // Role student=roleRepository.findByName("STUDENT").get();
     // Role admin=roleRepository.findByName("ADMIN").get();
     
-    return new ResponseEntity<>(user.getAuthorities(),HttpStatus.OK);
+    return new ResponseEntity<>(user.getAuthorities().toArray()[0].toString(),HttpStatus.OK);
 
 
 
