@@ -6,6 +6,7 @@ import com.ess.lms.Models.Course;
 import com.ess.lms.Models.Role;
 import com.ess.lms.Models.UserEntity;
 import com.ess.lms.Repositories.CourseRepository;
+import com.ess.lms.Repositories.RoleRepository;
 import com.ess.lms.Repositories.UserRepository;
 
 import java.util.ArrayList;
@@ -15,6 +16,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,6 +39,8 @@ public class CourseController
     private CourseRepository courseRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
     @PostMapping("add")
     public Object courseCreate(@RequestParam("name") String name)
     {
@@ -168,6 +173,29 @@ public class CourseController
             return new ResponseEntity<>((course.get().getStudents()),HttpStatus.OK);
         }
         return null;
+    }
+
+    @GetMapping("courses/lecturer/all") //Get All the connected lecturer's courses 
+    public Object getCourses()
+    {
+        Authentication Auth = SecurityContextHolder.getContext().getAuthentication();
+        Optional<UserEntity> lecturer = userRepository.findByUsername(Auth.getName());
+        Role lecturer_role=roleRepository.findByName("LECTURER").get();
+        List<Course> courses = courseRepository.findAll();
+        if(lecturer.isPresent())
+        {
+            for(Role r: lecturer.get().getRoles())
+            {
+                if(r.equals(lecturer_role))
+                {
+                    System.out.println("User effectively has a lecturer role.... let's continue");
+                    return new ResponseEntity<>(courses.stream().filter(course->course.getLecturers().contains(lecturer.get())).collect(Collectors.toList()),HttpStatus.OK);
+
+                }
+                return new ResponseEntity<>("NOT A LECTURER",HttpStatus.UNAUTHORIZED);
+            }
+        }
+        return new ResponseEntity<>("NOT CONNECTED",HttpStatus.UNAUTHORIZED);
     }
 
 }
